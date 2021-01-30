@@ -42,7 +42,6 @@ fn setup(
 
     for x in -5..5 {
         for y in -5..5 {
-            println!("Spawning at {} {}", x, y);
             create_tank(
                 commands,
                 &mut materials,
@@ -51,7 +50,7 @@ fn setup(
                     translation: Vec3::new(x as f32 * 200., y as f32 * 200., 0.),
                     ..Default::default()
                 },
-                x + y,
+                Team { team: x + y },
             );
         }
     }
@@ -62,10 +61,12 @@ fn create_tank(
     materials: &mut ResMut<Assets<ColorMaterial>>,
     asset_server: &mut Res<AssetServer>,
     transform: Transform,
-    team: i64,
+    team: Team,
 ) {
-    let tank_beige = asset_server.load("sprites/Tanks/tankBeige.png");
-    let barrel_beige = asset_server.load("sprites/Tanks/barrelBeige.png");
+    let tank_beige =
+        asset_server.load(&format!("sprites/Tanks/tank{}.png", team.color().name())[..]);
+    let barrel_beige =
+        asset_server.load(&format!("sprites/Tanks/barrel{}.png", team.color().name())[..]);
     commands
         .spawn(SpriteBundle {
             material: materials.add(tank_beige.into()),
@@ -77,7 +78,7 @@ fn create_tank(
             turn_speed: 3.,
             health: 1000,
         })
-        .with(Team { team })
+        .with(team)
         .with(Radius { radius: 100. })
         .with_children(|parent| {
             parent
@@ -85,7 +86,7 @@ fn create_tank(
                     Transform::default(),
                     GlobalTransform::default(),
                     Barrel {},
-                    Team { team },
+                    team,
                 ))
                 .with_children(|parent| {
                     parent.spawn(SpriteBundle {

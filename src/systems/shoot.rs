@@ -16,7 +16,7 @@ pub fn shoot(
 ) {
     for (_, team, global_transform) in query.iter() {
         if mouse_button_input.just_released(MouseButton::Left) {
-            let bullet_texture = asset_server.load("sprites/Bullets/bulletBeige.png");
+            let bullet_texture = asset_server.load(&format!("sprites/Bullets/bullet{}.png", team.color().name())[..]);
             commands
                 .spawn(SpriteBundle {
                     material: materials.add(bullet_texture.into()),
@@ -27,7 +27,7 @@ pub fn shoot(
                     },
                     ..Default::default()
                 })
-                .with((*team).clone())
+                .with(*team)
                 .with(HealthEffect { amount: -100 })
                 .with(Radius { radius: 10. })
                 .with(MoveForward { speed: 2000. });
