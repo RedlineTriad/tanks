@@ -5,16 +5,16 @@ use bevy::{
     sprite::ColorMaterial,
 };
 
-use crate::components::{Barrel, MoveForward};
+use crate::components::{Barrel, HealthEffect, MoveForward, Radius, Team};
 
 pub fn shoot(
     mouse_button_input: Res<Input<MouseButton>>,
     commands: &mut Commands,
     asset_server: Res<AssetServer>,
     mut materials: ResMut<Assets<ColorMaterial>>,
-    query: Query<(&Barrel, &GlobalTransform)>,
+    query: Query<(&Barrel, &Team, &GlobalTransform)>,
 ) {
-    for (_, global_transform) in query.iter() {
+    for (_, team, global_transform) in query.iter() {
         if mouse_button_input.just_released(MouseButton::Left) {
             let bullet_texture = asset_server.load("sprites/Bullets/bulletBeige.png");
             commands
@@ -27,6 +27,9 @@ pub fn shoot(
                     },
                     ..Default::default()
                 })
+                .with((*team).clone())
+                .with(HealthEffect { amount: -100 })
+                .with(Radius { radius: 10. })
                 .with(MoveForward { speed: 2000. });
         }
     }
