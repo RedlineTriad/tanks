@@ -5,7 +5,7 @@ use bevy::{
     sprite::ColorMaterial,
 };
 
-use crate::components::{Barrel, HealthEffect, MoveForward, Radius, Team};
+use crate::components::{Barrel, Health, HealthEffect, MoveForward, Radius, Team};
 
 pub fn shoot(
     mouse_button_input: Res<Input<MouseButton>>,
@@ -29,6 +29,7 @@ pub fn shoot(
                 })
                 .with(*team)
                 .with(HealthEffect { amount: -100 })
+                .with(Health(1))
                 .with(Radius { radius: 10. })
                 .with(MoveForward { speed: 2000. });
         }

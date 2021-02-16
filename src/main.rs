@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use components::{Barrel, MousePosition, MouseState, Radius, Tank, Team};
-use systems::{barrel_aim, mouse_position, move_forward, shoot, tank_hit, tank_movement};
+use components::{Barrel, Health, MousePosition, MouseState, Radius, Tank, Team};
+use systems::{barrel_aim, death, mouse_position, move_forward, shoot, tank_hit, tank_movement};
 mod components;
 mod systems;
 
@@ -20,6 +20,7 @@ fn main() {
         .add_system(move_forward.system())
         .add_system(shoot.system())
         .add_system(tank_hit.system())
+        .add_system(death.system())
         .run();
 }
 
@@ -40,14 +41,14 @@ fn setup(
         .spawn(Camera2dBundle::default())
         .spawn(CameraUiBundle::default());
 
-    for x in -5..5 {
-        for y in -5..5 {
+    for x in -0..1 {
+        for y in -0..1 {
             create_tank(
                 commands,
                 &mut materials,
                 &mut asset_server,
                 Transform {
-                    translation: Vec3::new(x as f32 * 200., y as f32 * 200., 0.),
+                    translation: Vec3::new(x as f32 * 80., y as f32 * 80., 0.),
                     ..Default::default()
                 },
                 Team { team: x + y },
@@ -76,10 +77,10 @@ fn create_tank(
         .with(Tank {
             speed: 500.,
             turn_speed: 3.,
-            health: 1000,
         })
+        .with(Health(1000))
         .with(team)
-        .with(Radius { radius: 100. })
+        .with(Radius { radius: 30. })
         .with_children(|parent| {
             parent
                 .spawn((
