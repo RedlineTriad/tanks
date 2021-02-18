@@ -1,6 +1,6 @@
 use bevy::{ecs::{Changed, Commands, Entity, Query, Res, ResMut}, math::Vec3, prelude::{AssetServer, Assets, DespawnRecursiveExt, GlobalTransform, SpriteBundle, Transform}, sprite::ColorMaterial};
 
-use crate::components::{Health, Radius};
+use crate::components::{Health, Lifetime, Radius};
 
 pub fn death(
     commands: &mut Commands,
@@ -23,7 +23,8 @@ pub fn death(
                             ..Default::default()
                         },
                         ..Default::default()
-                    });
+                    })
+                        .with(Lifetime(radius.radius / 25.));
                 }
             }
         }

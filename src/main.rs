@@ -1,6 +1,9 @@
 use bevy::prelude::*;
 use components::{Barrel, Health, MousePosition, MouseState, Radius, Tank, Team};
-use systems::{barrel_aim, death, mouse_position, move_forward, shoot, tank_hit, tank_movement};
+use systems::{
+    barrel_aim, death, lifetime, lifetime_destroy, mouse_position, move_forward, shoot, tank_hit,
+    tank_movement,
+};
 mod components;
 mod systems;
 
@@ -21,6 +24,8 @@ fn main() {
         .add_system(shoot.system())
         .add_system(tank_hit.system())
         .add_system(death.system())
+        .add_system(lifetime.system())
+        .add_system(lifetime_destroy.system())
         .run();
 }
 
@@ -41,8 +46,8 @@ fn setup(
         .spawn(Camera2dBundle::default())
         .spawn(CameraUiBundle::default());
 
-    for x in -0..1 {
-        for y in -0..1 {
+    for x in -2..2 {
+        for y in -2..2 {
             create_tank(
                 commands,
                 &mut materials,

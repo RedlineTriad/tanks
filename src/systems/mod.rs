@@ -1,5 +1,6 @@
 mod barrel;
 mod death;
+mod lifetime;
 mod mouse;
 mod move_forward;
 mod shoot;
@@ -7,6 +8,7 @@ mod tank;
 mod tank_hit;
 
 pub use barrel::*;
+pub use lifetime::*;
 pub use death::*;
 pub use mouse::*;
 pub use move_forward::*;
