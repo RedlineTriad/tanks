@@ -8,8 +8,8 @@ mod tank;
 mod tank_hit;
 
 pub use barrel::*;
-pub use lifetime::*;
 pub use death::*;
+pub use lifetime::*;
 pub use mouse::*;
 pub use move_forward::*;
 pub use shoot::*;

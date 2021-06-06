@@ -1,9 +1,15 @@
-use bevy::{ecs::Query, math::Vec3, prelude::GlobalTransform};
+use bevy::{
+    math::Vec3,
+    prelude::{GlobalTransform, Query, Without},
+};
 
 use crate::components::{Health, HealthEffect, Radius, Tank, Team};
 
 pub fn tank_hit(
-    mut health_eff_query: Query<(&HealthEffect, &mut Health, &GlobalTransform, &Radius, &Team)>,
+    mut health_eff_query: Query<
+        (&HealthEffect, &mut Health, &GlobalTransform, &Radius, &Team),
+        Without<Tank>,
+    >,
     mut tank_query: Query<(&Tank, &mut Health, &GlobalTransform, &Radius, &Team)>,
 ) {
     for (health_eff, mut eff_health, eff_trans, eff_radius, eff_team) in health_eff_query.iter_mut()

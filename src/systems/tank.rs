@@ -1,9 +1,8 @@
 use bevy::{
     core::Time,
-    ecs::{Query, Res},
     input::Input,
-    math::{Quat, Vec3},
-    prelude::{KeyCode, Transform},
+    math::Quat,
+    prelude::{KeyCode, Query, Res, Transform},
 };
 
 use crate::components::Tank;
@@ -34,8 +33,7 @@ pub fn tank_movement(
         transform.rotate(Quat::from_rotation_z(
             -turn_input * tank.turn_speed * time.delta_seconds(),
         ));
-        let move_dir =
-            transform.rotation * Vec3::unit_y() * drive * tank.speed * time.delta_seconds();
+        let move_dir = transform.local_y() * drive * tank.speed * time.delta_seconds();
         transform.translation += move_dir;
     }
 }

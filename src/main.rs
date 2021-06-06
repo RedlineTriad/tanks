@@ -1,5 +1,5 @@
 use bevy::prelude::*;
-use components::{Barrel, Health, MousePosition, MouseState, Radius, Tank, Team};
+use components::{Barrel, Health, MainCamera, MousePosition, Radius, Tank, Team};
 use systems::{
     barrel_aim, death, lifetime, lifetime_destroy, mouse_position, move_forward, shoot, tank_hit,
     tank_movement,
@@ -9,7 +9,7 @@ mod systems;
 
 fn main() {
     App::build()
-        .add_resource(WindowDescriptor {
+        .insert_resource(WindowDescriptor {
             title: "Tanks".to_string(),
             vsync: false,
             ..Default::default()
@@ -30,26 +30,21 @@ fn main() {
 }
 
 fn setup(
-    commands: &mut Commands,
+    mut commands: Commands,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut asset_server: Res<AssetServer>,
 ) {
-    let camera = Camera2dBundle::default();
-    let e = commands.spawn(camera).current_entity().unwrap();
+    let camera = OrthographicCameraBundle::new_2d();
+    let e = commands.spawn_bundle(camera).id();
 
-    commands.insert_resource(MouseState {
-        cursor: Default::default(),
-        camera: e,
-    });
+    commands.insert_resource(MainCamera { camera: e });
 
-    commands
-        .spawn(Camera2dBundle::default())
-        .spawn(CameraUiBundle::default());
+    commands.spawn_bundle(UiCameraBundle::default());
 
     for x in -2..2 {
         for y in -2..2 {
             create_tank(
-                commands,
+                &mut commands,
                 &mut materials,
                 &mut asset_server,
                 Transform {
@@ -74,28 +69,28 @@ fn create_tank(
     let barrel_beige =
         asset_server.load(&format!("sprites/Tanks/barrel{}.png", team.color().name())[..]);
     commands
-        .spawn(SpriteBundle {
+        .spawn_bundle(SpriteBundle {
             material: materials.add(tank_beige.into()),
             transform,
             ..Default::default()
         })
-        .with(Tank {
+        .insert(Tank {
             speed: 500.,
             turn_speed: 3.,
         })
-        .with(Health(1000))
-        .with(team)
-        .with(Radius { radius: 30. })
+        .insert(Health(1000))
+        .insert(team)
+        .insert(Radius { radius: 30. })
         .with_children(|parent| {
             parent
-                .spawn((
+                .spawn_bundle((
                     Transform::default(),
                     GlobalTransform::default(),
                     Barrel {},
                     team,
                 ))
                 .with_children(|parent| {
-                    parent.spawn(SpriteBundle {
+                    parent.spawn_bundle(SpriteBundle {
                         transform: Transform::from_translation(Vec3::new(0.0, 15.0, 1.0)),
                         material: materials.add(barrel_beige.into()),
                         ..Default::default()

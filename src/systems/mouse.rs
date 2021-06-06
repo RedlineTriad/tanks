@@ -1,22 +1,23 @@
 use bevy::{
-    ecs::{Query, Res, ResMut},
     math::Vec2,
-    prelude::{Events, Transform},
+    prelude::{EventReader, Query, Res, ResMut, Transform},
     window::{CursorMoved, Windows},
 };
 
-use crate::components::{MousePosition, MouseState};
+use crate::components::{MainCamera, MousePosition};
 
 pub fn mouse_position(
-    mut state: ResMut<MouseState>,
+    mut cursor: EventReader<CursorMoved>,
+    main_camera: Res<MainCamera>,
     mut mouse_pos: ResMut<MousePosition>,
-    cursor_moved_events: Res<Events<CursorMoved>>,
     windows: Res<Windows>,
     // query to get camera components
     transforms: Query<&Transform>,
 ) {
-    if let Some(cursor_event) = state.cursor.iter(&cursor_moved_events).last() {
-        let camera_transform = transforms.get_component::<Transform>(state.camera).unwrap();
+    if let Some(cursor_event) = cursor.iter().last() {
+        let camera_transform = transforms
+            .get_component::<Transform>(main_camera.camera)
+            .unwrap();
 
         // get the size of the window that the event is for
         let window = windows.get(cursor_event.id).unwrap();
